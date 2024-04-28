@@ -4,18 +4,10 @@
 DELIMETER //
 
 CREATE
-	FUNCTION [IF NOT EXISTS] SafeDiv(a INT, b INT)
+	FUNCTION SafeDiv(a INT, b INT)
 	RETURNS FLOAT
 	BEGIN
-		DECLARE ret_val INT;
-
-		IF b = 0 THEN
-			SET ret_val = 0;
-		ELSE
-			SET ret_val = a / b;
-		END IF;
-		
-		RETURN ret_val;
-	END;
+		RETURN IF(b = 0, 0, a / b);
+	END //
 
 DELIMITER ;
