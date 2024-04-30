@@ -1,0 +1,2 @@
+//script deletes alll specified doc in a collection
+db.school.deleteMany({name: "Holberton school"})
