@@ -6,4 +6,4 @@ def update_topics(mongo_collection, name, topics):
     '''Updates specified document with specified topics'''
     doc_2update = {"name": name}
     new_topics = {"$set": {"topics": topics}}
-    mongo_collection.update_one(doc_2update, new_topics)
+    mongo_collection.update_many(doc_2update, new_topics)
