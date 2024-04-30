@@ -1,0 +1,2 @@
+// script lists a specific doc in a collection
+db.school.find({name: "Holberton school"})
