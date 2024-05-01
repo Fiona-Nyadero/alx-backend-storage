@@ -1,0 +1,2 @@
+// script lists all docs with a specific condition in a collection
+db.school.find({name: {"$regex": "^Holberton"}})
