@@ -2,7 +2,7 @@
 '''Module writes strings to Redis'''
 import redis
 import uuid
-from typing import Union
+from typing import Union, Callable, Optional
 
 
 class Cache:
@@ -18,3 +18,22 @@ class Cache:
         schulssel = str(uuid.uuid4())
         self._redis.set(schulssel, data)
         return schulssel
+
+    def get(
+        self, key: str, fn: Optional[Callable] = None
+    ) -> Union[str, bytes, int, float]:
+        '''Retrieves data from Redis'''
+        info = self._redis.get(key)
+        if info is None:
+            return None
+        if fn:
+            return fn(info)
+        return info
+
+    def get_str(self, key: str) -> str:
+        '''Uses get method above with auto str conversion'''
+        return self.get(key, fn=str)
+
+    def get_int(self, key: str) -> int:
+        '''Uses get method above with auto int conversion'''
+        return self.get(key, fn=int)
