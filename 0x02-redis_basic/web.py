@@ -7,17 +7,17 @@ import time
 
 def get_page(url: str) -> str:
     '''Fx gets HTML content from URL, tracks access & caches for 10sec'''
-    r = redis.Redis()
+    red = redis.Redis()
 
-    cached_html = r.get(url)
+    cached_html = red.get(url)
     if cached_html:
+        red.incr(f"count:{url}")
         return cached_html.decode('utf-8')
 
-    response = requests.get(url)
-    html_content = response.text
+    respse = requests.get(url)
+    html_content = respse.text
 
-    r.setex(url, 10, html_content)
-
-    r.incr(f"count:{url}")
+    red.setex(url, 10, html_content)
+    red.setex(f"count:{url}", 10, 1)
 
     return html_content
