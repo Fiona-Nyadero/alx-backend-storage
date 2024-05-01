@@ -35,6 +35,23 @@ def call_history(method: Callable) -> Callable:
     return wrapper
 
 
+def replay(method: Callable) -> None:
+    """doc doc class"""
+    inpt_schsl = "{}:inputs".format(method.__qualname__)
+    outpt_schsl = "{}:outputs".format(method.__qualname__)
+
+    inpts = method.__self__._redis.lrange(inpt_schsl, 0, -1)
+    outpts = method.__self__._redis.lrange(outpt_schsl, 0, -1)
+
+    print("{} was called {} times:".format(method.__qualname__, len(inpts)))
+    for inp, out in zip(inpts, outpts):
+        print(
+            "{}(*{}) -> {}".format(
+                method.__qualname__, inp.decode("utf-8"), out.decode("utf-8")
+            )
+        )
+
+
 class Cache:
     '''Cache class'''
 
