@@ -12,10 +12,26 @@ def count_calls(method: Callable) -> Callable:
 
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):
-        '''wrapper function for the count_calls decorator'''
+        '''wrapper fx for the count_calls decorator'''
         schulssel = method.__qualname__
         self._redis.incr(schulssel)
         return method(self, *args, **kwargs)
+    return wrapper
+
+
+def call_history(method: Callable) -> Callable:
+    '''Stores history of inputs & outputs for particular fx'''
+    inschsl = method.__qualname__ + ":inputs"
+    outschsl = method.__qualname__ + ":outputs"
+
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
+        '''wrapper fx for the call_history decorator'''
+        self._redis.rpush(inschsl, str(args))
+        res = method(self, *args, **kwargs)
+        self._redis.rpush(outschsl, str(res))
+        return res
+
     return wrapper
 
 
@@ -28,6 +44,7 @@ class Cache:
         self._redis.flushdb()
 
     @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         '''Stores data in Redis & generates a random key'''
         schulssel = str(uuid.uuid4())
